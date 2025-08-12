@@ -1,0 +1,53 @@
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.Scanner;
+
+public class WeatherAppMock {
+
+    // Simulated JSON response (like from OpenWeatherMap)
+    private static final String MOCK_JSON = """
+        {
+          "name": "Nairobi",
+          "main": {
+            "temp": 22.5,
+            "humidity": 70
+          },
+          "weather": [
+            {
+              "description": "clear sky"
+            }
+          ]
+        }
+        """;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter a city name: ");
+        String inputCity = scanner.nextLine();
+
+        System.out.println("\nFetching weather data for '" + inputCity + "'...");
+
+        // Simulate using mock data instead of real HTTP request
+        parseAndDisplayWeather(MOCK_JSON);
+    }
+
+    private static void parseAndDisplayWeather(String json) {
+        String city = extractValue(json, "\"name\":\\s*\"(.*?)\"");
+        String temp = extractValue(json, "\"temp\":\\s*(.*?),");
+        String humidity = extractValue(json, "\"humidity\":\\s*(.*?)[,\\n]");
+        String description = extractValue(json, "\"description\":\\s*\"(.*?)\"");
+
+        System.out.println("\n📍 Weather Info:");
+        System.out.println("City       : " + city);
+        System.out.println("Temperature: " + temp + " °C");
+        System.out.println("Humidity   : " + humidity + " %");
+        System.out.println("Condition  : " + description);
+    }
+
+    // Simple regex-based JSON value extractor
+    private static String extractValue(String json, String patternStr) {
+        Pattern pattern = Pattern.compile(patternStr);
+        Matcher matcher = pattern.matcher(json);
+        return matcher.find() ? matcher.group(1) : "N/A";
+    }
+}
